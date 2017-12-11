@@ -32,7 +32,7 @@ class SpiderMain(object):
                 self.urls.add_new_urls(new_urls)
                 self.outputer.collect_data(new_data)
                  
-                if count == 10000000:
+                if count == 10000:
                     break
                 count = count + 1
             except:
@@ -42,7 +42,7 @@ class SpiderMain(object):
         
 if __name__ == '__main__':
     print("开始爬取")
-    root_url = 'https://baike.baidu.com/item/%E9%AB%98%E5%A7%9D%E7%91%B6'
+    root_url = 'https://baike.baidu.com/item/%E4%BD%99%E5%85%86'
     obj_spider = SpiderMain()
     obj_spider.craw(root_url)
     print('爬取结束')
