@@ -42,7 +42,7 @@ class SpiderMain(object):
         
 if __name__ == '__main__':
     print("开始爬取")
-    root_url = 'https://baike.baidu.com/item/%E4%BD%99%E5%85%86'
+    root_url = 'https://baike.baidu.com/item/%E8%8A%B1%E9%B8%9F/5703594#viewPageContent'
     obj_spider = SpiderMain()
     obj_spider.craw(root_url)
     print('爬取结束')

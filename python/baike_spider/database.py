@@ -22,9 +22,9 @@ class Database(object):
             # 使用cursor()方法创建一个游标对象cur
             cur = conn.cursor()
             # 查询数据库是否存在当条数据
-            select_sql = 'SELECT COUNT(ID) FROM URL_LIST WHERE URL = (%s)'
+            select_sql = 'SELECT COUNT(ID) FROM BAIKE_URL_LIST WHERE URL = (%s)'
             # 插入操作
-            insert_sql = 'INSERT INTO URL_LIST(URL,IS_USE)VALUES(%s,%s)'
+            insert_sql = 'INSERT INTO BAIKE_URL_LIST(URL,IS_CRAW)VALUES(%s,%s)'
             try:
                 # 执行查询sql查询数据库是否存在此条数据
                 cur.execute(select_sql, [new_full_url])
