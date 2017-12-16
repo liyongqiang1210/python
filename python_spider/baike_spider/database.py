@@ -18,17 +18,17 @@ class Database(object):
     # 插入url的方法
     def insertUrl(self, new_full_url) :
             # 打开数据连接
-            conn = pymysql.connect(host='127.0.0.1', user='root', password='root', database='maven')
+            conn = pymysql.connect(host='39.106.154.2', user='root', password='root', database='maven')
             # 使用cursor()方法创建一个游标对象cur
             cur = conn.cursor()
             # 查询数据库是否存在当条数据
-            select_sql = 'SELECT COUNT(ID) FROM BAIKE_URL_LIST WHERE URL = (%s)'
+            select_sql = "SELECT COUNT(ID) FROM baike_url_list WHERE URL = '%s'"  % (new_full_url)
             # 插入操作
-            insert_sql = 'INSERT INTO BAIKE_URL_LIST(URL,IS_CRAW)VALUES(%s,%s)'
+            insert_sql = 'INSERT INTO baike_url_list(URL,IS_CRAW)VALUES(%s,%s)'
             try:
                 # 执行查询sql查询数据库是否存在此条数据
-                cur.execute(select_sql, [new_full_url])
-                res = cur.fetchone()[0];
+                cur.execute(select_sql)
+                res = cur.fetchone()[0]
                 if res < 1:
                     print('开始插入数据---------------')
                     print('url:%s' % (new_full_url))
