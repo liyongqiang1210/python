@@ -12,7 +12,6 @@ Created on 2017年12月4日
 from bs4 import BeautifulSoup
 import re
 from urllib.parse import urljoin
-from baike_spider import database
 
 
 class HtmlParsesr(object):
