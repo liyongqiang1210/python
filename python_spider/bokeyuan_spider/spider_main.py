@@ -11,6 +11,7 @@ Created on 2017年12月12日
 from bokeyuan_spider import html_downloader, html_parser, html_outputer, \
 	database
 
+
 class SpiderMain(object):
 
 	def __init__(self):
@@ -22,6 +23,7 @@ class SpiderMain(object):
 		self.outputer = html_outputer.HtmlOutputer()
 		# 数据库url管理器器
 		self.database = database.Database()
+
 	def craw(self, root_url, url_type):
 		try:
 			print('CRAW URL: %s' % (root_url))
@@ -33,15 +35,17 @@ class SpiderMain(object):
 			for url in new_urls :
 				self.database.insertUrl(url, url_type, '')
 			
-			
 		except :
 				print('craw falied !!!')
 
+
 if __name__ == '__main__':
-		print('-------------craw start-------------')
-		url_type = 'java'
+		
+		type_list = ['web', 'java', 'php', 'python', 'cpp', 'javascript', 'jquery', 'linux', 'mysql', 'all']
 		obj_spider = SpiderMain()
-		for page in range(1, 201):
-			root_url = 'https://www.cnblogs.com/cate/java/%d' % (page)
-			obj_spider.craw(root_url, url_type)
-		print('-------------craw end-------------')
+		for url_type in type_list:
+			print('-------------' + url_type + ' craw start-------------')
+			for page in range(0, 201):
+				root_url = 'https://www.cnblogs.com/cate/%s/%d' % (url_type,page)
+				obj_spider.craw(root_url, url_type)
+		print('-------------' + url_type + ' craw end-------------')

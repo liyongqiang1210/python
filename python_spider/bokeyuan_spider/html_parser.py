@@ -19,7 +19,7 @@ class HtmlParsesr(object):
     def _get_new_urls(self,soup):
         new_urls = set()
         # url格式：'http://www.cnblogs.com/dzpykj/p/8043810.html'
-        links = soup.find_all('a', class_='titlelnk', href=re.compile(r'http://www.cnblogs.com/[a-zA-Z]+/p/[0-9]+.html'))
+        links = soup.find_all('a', class_='titlelnk', href=re.compile(r'http://www.cnblogs.com/([a-zA-Z0-9]|-)+/p/([a-zA-Z0-9]|-)+.html'))
         for link in links:
             new_url = link['href']
             new_urls.add(new_url)
