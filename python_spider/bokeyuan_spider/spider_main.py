@@ -35,7 +35,6 @@ class SpiderMain(object):
 			
 			for url in new_urls :
 				self.database.insertUrl(url, url_type, '')
-			
 		except :
 				print('craw falied !!!')
 
