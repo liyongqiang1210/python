@@ -45,14 +45,14 @@ class Test(object):
                                 #输出到url.txt文件
                                 txt.write(new_url+'\n')
                                 #开始请求网页
-#                                 response = urlopen(url)
-#                                 if response.getcode() != 200:
-#                                     i = i+1
-#                                     print('请求次数：%d' % (i))
-#                                 else:
-#                                     print(response.getcode())
-#                                     print('url地址：%s' % (url))
-#                                     break
+                                response = urlopen(url)
+                                if response.getcode() != 200:
+                                    i = i+1
+                                    print('请求次数：%d' % (i))
+                                else:
+                                    print(response.getcode())
+                                    print('url地址：%s' % (url))
+                                    break
             #关闭输出流
             txt.close()
         except :
