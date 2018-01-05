@@ -1,13 +1,7 @@
-# coding=utf-8
-
 '''
-
-Created on 2017å¹´12æœˆ4æ—¥
-
-
-
-@author: Li Yongqiang
-
+Created on 2018Äê1ÔÂ5ÈÕ
+pythonÔËÎ¬×Ô¶¯»¯ÊÓÆµ
+@author: liyongqiang
 '''
 from urllib.request import urlopen
 from _io import open
@@ -15,24 +9,24 @@ from _io import open
 
 class Test(object):
     if __name__ == '__main__':
-        #å‡ºç°é¢‘ç‡é«˜çš„å­—ç¬¦
+        # ³öÏÖÆµÂÊ¸ßµÄ×Ö·û
         character = ['a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        # åŸŸå
+        # ÓòÃû
         host = ['v12.51cto.com', 'v15.51cto.com', 'v4.51cto.com', 'v5.51cto.com']
-        # æ•°å­—
+        # Êı×Ö
         number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        # https://v12.51cto.com/2017/07/29/74183/a81d/general/loco_video_198000_6.ts
-        # è¯·æ±‚çš„url
+        # https://v4.51cto.com/part/2017/06/05/47667/1763/high/loco_video_556000_2.ts
+        # ÇëÇóµÄurl
         url = ''
-        # å˜é‡i
+        # ±äÁ¿i
         i = 0
-        #åˆ›å»ºä¸€ä¸ªtxtæ–‡ä»¶å¹¶æŠŠurlè¾“å…¥åˆ°æ–‡ä»¶ä¸­
+        # ´´½¨Ò»¸ötxtÎÄ¼ş²¢°ÑurlÊäÈëµ½ÎÄ¼şÖĞ
         try:
-            txt = open('url.txt','w')
-            # è¿™å±‚å¾ªç¯çš„æ˜¯https://åçš„åŸŸå
+            txt = open('url.txt', 'w')
+            # Õâ²ãÑ­»·µÄÊÇhttps://ºóµÄÓòÃû
             for h in host:
                 url = 'https://' + h + '/2017/07/29/74183/'
-                # https://v12.51cto.com/2017/07/29/74183/åçš„å››ä½éšæœºå­—ç¬¦
+                # https://v12.51cto.com/2017/07/29/74183/ºóµÄËÄÎ»Ëæ»ú×Ö·û
                 for char in character:
                     url1 = url + char
                     for char1 in character:
@@ -40,20 +34,20 @@ class Test(object):
                         for char2 in character:
                             url3 = url2 + char2
                             for char3 in character:
-                                #æ–°çš„url
+                                # ĞÂµÄurl
                                 new_url = url3 + char3 + '/general/loco_video_198000_0.ts'
-                                #è¾“å‡ºåˆ°url.txtæ–‡ä»¶
-                                txt.write(new_url+'\n')
-                                #å¼€å§‹è¯·æ±‚ç½‘é¡µ
+                                # Êä³öµ½url.txtÎÄ¼ş
+                                txt.write(new_url + '\n')
+                                # ¿ªÊ¼ÇëÇóÍøÒ³
                                 response = urlopen(url)
                                 if response.getcode() != 200:
-                                    i = i+1
-                                    print('è¯·æ±‚æ¬¡æ•°ï¼š%d' % (i))
+                                    i = i + 1
+                                    print('ÇëÇó´ÎÊı£º%d' % (i))
                                 else:
                                     print(response.getcode())
-                                    print('urlåœ°å€ï¼š%s' % (url))
+                                    print('urlµØÖ·£º%s' % (url))
                                     break
-            #å…³é—­è¾“å‡ºæµ
+            # ¹Ø±ÕÊä³öÁ÷
             txt.close()
         except :
-            print('å¼‚å¸¸')
+            print('Òì³£')
