@@ -1,25 +1,25 @@
+# coding=utf-8
 '''
-Created on 2018Äê1ÔÂ5ÈÕ
-´´½¨ÎÄ¼ş¼Ğ¹¤¾ß
+Created on 2018å¹´1æœˆ5æ—¥
+åˆ›å»ºæ–‡ä»¶å¤¹å·¥å…·
 @author: liyongqiang
 '''
 import os
 class mkdir(object):
-    def mkdirs(self,path):
-        # È¥³ıÊ×Î»¿Õ¸ñ
+    
+    # åˆ›å»ºæ–‡ä»¶å¤¹çš„æ–¹æ³•
+    def mkdirs(self, path):
+        # å»é™¤é¦–ä½ç©ºæ ¼
         path = path.strip()
-        # È¥³ıÎ²²¿ \ ·ûºÅ
+        # å»é™¤å°¾éƒ¨ \ ç¬¦å·
         path = path.rstrip("\\")
-        
-        #ÅĞ¶Ï´´½¨µÄÂ·¾¶ÊÇ·ñ´æÔÚ·µ»Øtrue/false
-        isExists = os._exists(path)
-        
-        #ÅĞ¶Ï½á¹û
-        if isExists: #´æÔÚ²»´´½¨
-            print('Ä¿Â¼ÒÑ¾­´æÔÚ')
-            return False
-        else : #²»´æÔÚÔò´´½¨
+        # åˆ¤æ–­åˆ›å»ºçš„è·¯å¾„æ˜¯å¦å­˜åœ¨è¿”å›true/false
+        isExists = os.path.exists(path)
+        # åˆ¤æ–­ç»“æœ
+        if isExists:  # ç›®å½•å­˜åœ¨
+            print('ç›®å½•å·²ç»å­˜åœ¨')
+        else :  # ç›®å½•ä¸å­˜åœ¨åˆ™åˆ›å»º
             os.makedirs(path)
-            print('%s ´´½¨³É¹¦£¡'%(path))
-            return True
+            print('%s åˆ›å»ºæˆåŠŸï¼' % (path))
+        
         
