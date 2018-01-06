@@ -1,32 +1,52 @@
+# coding=utf-8
 '''
-Created on 2018Äê1ÔÂ5ÈÕ
-pythonÔËÎ¬×Ô¶¯»¯ÊÓÆµ
+Created on 2018å¹´1æœˆ5æ—¥
+pythonè¿ç»´è‡ªåŠ¨åŒ–è§†é¢‘
 @author: liyongqiang
 '''
-from urllib.request import urlopen
 from _io import open
+import time
+import os
 
 
 class Test(object):
+    
+    # https://v4.51cto.com/part/2017/06/05/47667/1763/high/loco_video_556000_2.ts
     if __name__ == '__main__':
-        # ³öÏÖÆµÂÊ¸ßµÄ×Ö·û
+        # å‡ºç°é¢‘ç‡é«˜çš„å­—ç¬¦
         character = ['a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        # ÓòÃû
+        # åŸŸå
         host = ['v12.51cto.com', 'v15.51cto.com', 'v4.51cto.com', 'v5.51cto.com']
-        # Êı×Ö
+        # æ•°å­—
         number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        # https://v4.51cto.com/part/2017/06/05/47667/1763/high/loco_video_556000_2.ts
-        # ÇëÇóµÄurl
-        url = ''
-        # ±äÁ¿i
-        i = 0
-        # ´´½¨Ò»¸ötxtÎÄ¼ş²¢°ÑurlÊäÈëµ½ÎÄ¼şÖĞ
+        
         try:
-            txt = open('url.txt', 'w')
-            # Õâ²ãÑ­»·µÄÊÇhttps://ºóµÄÓòÃû
+            # è·å–å½“å‰æ—¥æœŸ
+            date = time.strftime('%Y%m%d', time.localtime())
+            # å­˜æ”¾urlæ–‡ä»¶çš„è·¯å¾„
+            path = 'G:\\url\\' + date
+            # å»é™¤é¦–ä½ç©ºæ ¼
+            path = path.strip()
+            # å»é™¤å°¾éƒ¨ \ ç¬¦å·
+            path = path.rstrip("\\")
+            # åˆ¤æ–­åˆ›å»ºçš„è·¯å¾„æ˜¯å¦å­˜åœ¨è¿”å›true/false
+            isExists = os.path.exists(path)
+            # åˆ¤æ–­ç»“æœ
+            if isExists:  # ç›®å½•å­˜åœ¨
+                print('ç›®å½•å·²ç»å­˜åœ¨')
+            else :  # ç›®å½•ä¸å­˜åœ¨åˆ™åˆ›å»º
+                os.makedirs(path)
+                print('%s åˆ›å»ºæˆåŠŸï¼' % (path))
+            # è·å–å½“å‰æ—¶é—´ç”¨ä½œurlçš„æ–‡ä»¶å
+            time = time.strftime('%H%M%S', time.localtime())
+            # åˆ›å»ºä¸€ä¸ªtxtæ–‡ä»¶å¹¶æŠŠurlè¾“å…¥åˆ°æ–‡ä»¶ä¸­
+            txt = open(path + '\\' + time + '.txt', 'w')
+            
+            print('urlå¼€å§‹åˆ›å»º...')
+            # è¿™å±‚å¾ªç¯çš„æ˜¯https://åçš„åŸŸå
             for h in host:
                 url = 'https://' + h + '/2017/07/29/74183/'
-                # https://v12.51cto.com/2017/07/29/74183/ºóµÄËÄÎ»Ëæ»ú×Ö·û
+                # https://v12.51cto.com/2017/07/29/74183/åçš„å››ä½éšæœºå­—ç¬¦
                 for char in character:
                     url1 = url + char
                     for char1 in character:
@@ -34,20 +54,18 @@ class Test(object):
                         for char2 in character:
                             url3 = url2 + char2
                             for char3 in character:
-                                # ĞÂµÄurl
-                                new_url = url3 + char3 + '/general/loco_video_198000_0.ts'
-                                # Êä³öµ½url.txtÎÄ¼ş
-                                txt.write(new_url + '\n')
-                                # ¿ªÊ¼ÇëÇóÍøÒ³
-                                response = urlopen(url)
-                                if response.getcode() != 200:
-                                    i = i + 1
-                                    print('ÇëÇó´ÎÊı£º%d' % (i))
-                                else:
-                                    print(response.getcode())
-                                    print('urlµØÖ·£º%s' % (url))
-                                    break
-            # ¹Ø±ÕÊä³öÁ÷
+                                url4 = url3 + char3 + '/general/loco_video_'
+                                for num in number:
+                                    url5 = url4 + num
+                                    for num1 in number:
+                                        url6 = url5 + num1
+                                        for num2 in number:
+                                            # url
+                                            new_url = url6 + num2 + '000_0.ts'
+                                            # è¾“å‡ºåˆ°url.txtæ–‡ä»¶
+                                            txt.write(new_url + '\n')
+            print('urlåˆ›å»ºç»“æŸ')
+            # å…³é—­è¾“å‡ºæµ
             txt.close()
         except :
-            print('Òì³£')
+            print('å¼‚å¸¸')
