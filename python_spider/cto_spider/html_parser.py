@@ -3,7 +3,7 @@
 
 '''
 
-Created on 2017年12月4日
+Created on 2017年1月9日
 
  
 
@@ -20,11 +20,16 @@ class HtmlParsesr(object):
     # 获取页面的url集合
     def _get_new_urls(self, page_url, soup):
         new_urls = set()
-        # url格式：''
-        links = soup.find_all('a', href=re.compile(r'/item/([A-Z0-9]|%)+'))
-        for link in links:
+        # url格式：'http://edu.51cto.com/center/course/lesson/index?id=12263'
+        # 匹配到合适的url
+        links = soup.find_all('a', href=re.compile(r'/center/course/lesson/index\?id=\d{5}'))
+        # 视频title
+        titles = soup.find_all('title', href=re.compile(r'/center/course/lesson/index\?id=\d{5}'))
+        
+        for link,title in links,titles:
+            title = title # 视频标题
             new_url = link['href']
-            new_full_url = urljoin(page_url, new_url)
+            new_full_url = urljoin(page_url, new_url) # 视频地址url
             new_urls.add(new_full_url)
         return new_urls
         

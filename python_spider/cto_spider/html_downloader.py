@@ -3,7 +3,7 @@
 
 '''
 
-Created on 2017年12月4日
+Created on 2017年1月9日
 
  
 
@@ -24,5 +24,5 @@ class HtmlDownloader(object):
         if response.getcode() != 200:
             return None
         
-        return response.read()
+        return response.read().decode('utf-8')
 
