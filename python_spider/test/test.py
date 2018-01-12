@@ -1,59 +1,49 @@
 # coding=utf-8
-
 '''
-
 Created on 2017年12月4日
-
-
-
+爬取51cto视频链接与视频名
 @author: Li Yongqiang
-
 '''
-from urllib.request import urlopen
-from _io import open
-
-
+from urllib import request
+from bs4 import BeautifulSoup
+import re
 class Test(object):
     if __name__ == '__main__':
-        #出现频率高的字符
-        character = ['a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        # 域名
-        host = ['v12.51cto.com', 'v15.51cto.com', 'v4.51cto.com', 'v5.51cto.com']
-        # 数字
-        number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        # https://v12.51cto.com/2017/07/29/74183/a81d/general/loco_video_198000_6.ts
-        # 请求的url
-        url = ''
-        # 变量i
-        i = 0
-        #创建一个txt文件并把url输入到文件中
-        try:
-            txt = open('url.txt','w')
-            # 这层循环的是https://后的域名
-            for h in host:
-                url = 'https://' + h + '/2017/07/29/74183/'
-                # https://v12.51cto.com/2017/07/29/74183/后的四位随机字符
-                for char in character:
-                    url1 = url + char
-                    for char1 in character:
-                        url2 = url1 + char1
-                        for char2 in character:
-                            url3 = url2 + char2
-                            for char3 in character:
-                                #新的url
-                                new_url = url3 + char3 + '/general/loco_video_198000_0.ts'
-                                #输出到url.txt文件
-                                txt.write(new_url+'\n')
-                                #开始请求网页
-                                response = urlopen(url)
-                                if response.getcode() != 200:
-                                    i = i+1
-                                    print('请求次数：%d' % (i))
-                                else:
-                                    print(response.getcode())
-                                    print('url地址：%s' % (url))
-                                    break
-            #关闭输出流
-            txt.close()
-        except :
-            print('异常')
+#         http = ['203.174.112.13:3128', '222.92.141.250:80']  # 可用的代理ip地址
+#         #这是代理IP
+#         proxy = {'http':'203.174.112.13:3128'}
+#         #创建ProxyHandler
+#         proxy_support = request.ProxyHandler(proxy)
+#         #创建Opener
+#         opener = request.build_opener(proxy_support)
+#         #添加User Angent
+#         opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0')]
+#         #安装OPener
+#         request.install_opener(opener)
+        # 访问网址
+        url = 'http://edu.51cto.com/center/course/index/list?wwwdh=&page='
+
+        # 使用自己安装好的Opener访问网址
+        for i in range(1, 189):
+            print('==================>第' + str(i) + '页开始')
+            response = request.urlopen(url + str(i))
+            # 读取相应信息并解码
+            if response.getcode() == 200 :  # 判断
+                html_cont = response.read().decode('utf-8')  # 获取网页内容
+            # 创建soup对象开始分析网页
+            soup = BeautifulSoup(html_cont, 'html.parser', from_encoding='utf-8')  # 创建soup对象
+            video_list = soup.find_all('div', class_='cList_Item')  # 视频信息列表
+            
+            # 遍历视频列表
+            for video in video_list:
+                video_soup = BeautifulSoup(str(video), 'html.parser')
+                tag = video_soup.find('a', title=re.compile(r'([\u4E00-\u9FA5\s]|-|\S|.)+')) 
+                video_url = tag['href']  # 视频url 
+                video_title = tag['title']  # 视频title
+                video_classHour = video_soup.find('p', class_='fl').string  # 视频课时
+                video_number = video_soup.find('p', class_='fr').string  # 视频学习人数
+                video_price = video_soup.find('h4').string  # 视频价格
+                print('视频url =======>%s\n视频title ========>%s\n视频价格 ========>%s\n视频课时 ========>%s\n视频学习人数 ========>%s' 
+                      % (video_url, video_title, video_price, video_classHour, video_number))
+            
+            print('==================>第' + str(i) + '页结束')    
