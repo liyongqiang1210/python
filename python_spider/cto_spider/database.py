@@ -33,8 +33,25 @@ class Database(object):
             
         cur.close()  # 关闭查询
         conn.close()  # 关闭数据库连接
+    
+    # 获取一条未爬取的视频课程url链接 
+    def selectCouserUrlIsCraw(self):
+        conn = pymysql.connect('39.106.154.2', 'root', 'root', 'maven', 'utf-8')
+        cur = conn.cursor()
+        select_sql = 'select url from 51cto_url_list where is_craw = 0 limit 1'
         
-        
+        try :
+            cur.execute(select_sql)
+            url = cur.fetchone()[0]
+            print('成功取出一条数据==============>'+url)
+            update_sql = 'update 51cto_url_lisr set is_craw = 1 where url = ' + url
+            cur.execute(update_sql)
+            conn.commit()
+        except :
+            conn.rollback()
+            print('selectCouserUrlIsCraw Exception')
+            
+                    
     # 插入url的方法
     def insertUrl(self, url) :
             # 打开数据连接
