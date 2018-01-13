@@ -12,7 +12,6 @@ Created on 2017年1月9日
 '''
 from bs4 import BeautifulSoup
 import re
-from urllib.parse import urljoin
 
 
 class HtmlParsesr(object):
@@ -23,14 +22,11 @@ class HtmlParsesr(object):
         # url格式：'http://edu.51cto.com/center/course/lesson/index?id=12263'
         # 匹配到合适的url
         links = soup.find_all('a', href=re.compile(r'/center/course/lesson/index\?id=\d{5}'))
-        # 视频title
-        titles = soup.find_all('title', href=re.compile(r'/center/course/lesson/index\?id=\d{5}'))
-        
-        for link,title in links,titles:
-            title = title # 视频标题
-            new_url = link['href']
-            new_full_url = urljoin(page_url, new_url) # 视频地址url
-            new_urls.add(new_full_url)
+        for link in links:
+            new_url = link['href']  # 视频url
+            title = link['title']  # 视频title
+            print('title=======>' + title +'\nurl地址=======>' + new_url)
+            new_urls.add(new_url)
         return new_urls
         
     def parse(self, page_url, html_cont):

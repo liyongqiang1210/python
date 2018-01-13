@@ -25,9 +25,8 @@ class SpiderMain(object):
     def craw(self, url):
         try:
             html_cont = self.downloader.downloade(url)  # 下载页面数据
-            print(html_cont)
             new_urls = self.parser.parse(url, html_cont)  # 获取url集合
-            for url in new_urls:
+            for url in new_urls: # 遍历url集合存入数据库
                 self.database.insertUrl(url)
         except:
             print('craw failed')
