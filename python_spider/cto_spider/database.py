@@ -16,6 +16,25 @@ import pymysql
 # 数据持久化类
 class Database(object): 
 
+    # 插入课程视频链接的方法
+    def insertCouserUrl(self, video_url, video_title, video_classHour, video_number, video_price):
+        # 打开数据连接
+        conn = pymysql.connect(host='39.106.154.2', user='root', password='root', database='maven', charset='utf8')
+        # 使用cursor()方法创建一个游标对象cur
+        cur = conn.cursor()
+        insert_sql = "insert into 51cto_url_list(url,title,class_hour,number,price,is_craw)values('%s','%s','%s','%s','%s',0)" % (video_url, video_title, video_classHour, video_number, video_price)  # 插入语句
+        try:
+            cur.execute(insert_sql)
+            conn.commit()
+            print('%s ===================> 插入成功' % (video_title))
+        except:
+            conn.rollback()
+            print('%s ===================> 插入失败' % (video_title))
+            
+        cur.close()  # 关闭查询
+        conn.close()  # 关闭数据库连接
+        
+        
     # 插入url的方法
     def insertUrl(self, url) :
             # 打开数据连接
@@ -23,9 +42,9 @@ class Database(object):
             # 使用cursor()方法创建一个游标对象cur
             cur = conn.cursor()
             # 查询数据库是否存在当条数据
-            select_sql = "SELECT COUNT(ID) FROM baike_url_list WHERE URL = '%s'" % (url)
+            select_sql = "SELECT COUNT(ID) FROM 51cto_url_list WHERE URL = '%s'" % (url)
             # 插入操作
-            insert_sql = "INSERT INTO baike_url_list(URL,IS_CRAW)VALUES('%s',%d)" % (url , 0)
+            insert_sql = "INSERT INTO 51cto_url_list(URL,IS_CRAW)VALUES('%s',%d)" % (url , 0)
             try:
                 # 执行查询sql查询数据库是否存在此条数据
                 cur.execute(select_sql)
