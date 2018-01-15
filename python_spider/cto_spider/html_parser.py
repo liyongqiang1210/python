@@ -12,28 +12,27 @@ Created on 2017年1月9日
 '''
 from bs4 import BeautifulSoup
 import re
+from cto_spider.database import Database
 
 
 class HtmlParsesr(object):
 
     # 获取页面的url集合
-    def _get_new_urls(self, page_url, soup):
-        new_urls = set()
+    def _get_new_urls(self, soup, video_id):
+        
         # url格式：'http://edu.51cto.com/center/course/lesson/index?id=12263'
-        # 匹配到合适的url
-        links = soup.find_all('a', href=re.compile(r'/center/course/lesson/index\?id=\d{5}'))
+        links = soup.find_all('a', href=re.compile(r'/center/course/lesson/index\?id=\d{5}'))  # 匹配到合适的url
         for link in links:
-            new_url = link['href']  # 视频url
-            title = link['title']  # 视频title
-            print('title=======>' + title +'\nurl地址=======>' + new_url)
-            new_urls.add(new_url)
-        return new_urls
+            course_url = link['href']  # 课程url
+            course_title = link['title']  # 课程title
+            Database.insertCourseUrl(self, course_url, course_title, video_id)
+            print('title=======>' + course_title + '\nurl地址=======>' + course_url)
         
-    def parse(self, page_url, html_cont):
+    def parse(self, video_id, html_cont):
         
-        if page_url is None:
+        if video_id is None:
             return
         else:
             soup = BeautifulSoup(html_cont, 'html.parser', from_encoding='utf-8')
-            new_urls = self._get_new_urls(page_url, soup)
+            new_urls = self._get_new_urls(soup, video_id)
             return new_urls

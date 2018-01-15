@@ -16,13 +16,13 @@ import pymysql
 # 数据持久化类
 class Database(object): 
 
-    # 插入课程视频链接的方法
-    def insertCouserUrl(self, video_url, video_title, video_classHour, video_number, video_price):
+    # 插入视频链接的方法
+    def insertVideoUrl(self, video_url, video_title, video_classHour, video_number, video_price):
         # 打开数据连接
         conn = pymysql.connect(host='39.106.154.2', user='root', password='root', database='maven', charset='utf8')
         # 使用cursor()方法创建一个游标对象cur
         cur = conn.cursor()
-        insert_sql = "insert into 51cto_url_list(url,title,class_hour,number,price,is_craw)values('%s','%s','%s','%s','%s',0)" % (video_url, video_title, video_classHour, video_number, video_price)  # 插入语句
+        insert_sql = "insert into 51cto_video_url_list(video_url,video_title,video_class_hour,video_number,video_price,video_is_craw)values('%s','%s','%s','%s','%s',0)" % (video_url, video_title, video_classHour, video_number, video_price)  # 插入语句
         try:
             cur.execute(insert_sql)
             conn.commit()
@@ -34,47 +34,41 @@ class Database(object):
         cur.close()  # 关闭查询
         conn.close()  # 关闭数据库连接
     
-    # 获取一条未爬取的视频课程url链接 
-    def selectCouserUrlIsCraw(self):
-        conn = pymysql.connect('39.106.154.2', 'root', 'root', 'maven', 'utf-8')
+    # 获取一条未爬取的视频url链接 
+    def selectVideoUrlIsCraw(self):
+        conn = pymysql.connect(host='39.106.154.2', user='root', password='root', database='maven', charset='utf8')
         cur = conn.cursor()
-        select_sql = 'select url from 51cto_url_list where is_craw = 0 limit 1'
+        select_sql = 'select video_id,video_url from 51cto_video_url_list where video_is_craw = 0 limit 1'
         
         try :
             cur.execute(select_sql)
-            url = cur.fetchone()[0]
-            print('成功取出一条数据==============>'+url)
-            update_sql = 'update 51cto_url_lisr set is_craw = 1 where url = ' + url
+            results = cur.fetchone()  # 查询的结果集
+            video_id = results[0]  # 视频id
+            video_url = results[1]  # 视频url地址
+            print('成功取出一条数据==============>' + video_url)
+            update_sql = "update 51cto_video_url_list set video_is_craw = 1 where video_id ='%d'" % (video_id)
             cur.execute(update_sql)
             conn.commit()
+            return video_id, video_url
         except :
             conn.rollback()
-            print('selectCouserUrlIsCraw Exception')
-            
+            print('selectVideoUrlIsCraw Exception')
                     
-    # 插入url的方法
-    def insertUrl(self, url) :
+    # 插入课程视频url的方法
+    def insertCourseUrl(self, course_url, course_title, video_url_id) :
             # 打开数据连接
-            conn = pymysql.connect(host='39.106.154.2', user='root', password='root', database='maven')
+            conn = pymysql.connect(host='39.106.154.2', user='root', password='root', database='maven', charset='utf8')
             # 使用cursor()方法创建一个游标对象cur
             cur = conn.cursor()
-            # 查询数据库是否存在当条数据
-            select_sql = "SELECT COUNT(ID) FROM 51cto_url_list WHERE URL = '%s'" % (url)
             # 插入操作
-            insert_sql = "INSERT INTO 51cto_url_list(URL,IS_CRAW)VALUES('%s',%d)" % (url , 0)
+            insert_sql = "insert into 51cto_course_url(course_url,course_title,video_url_id)values('%s','%s',%d)" % (course_url , course_title, video_url_id)
             try:
-                # 执行查询sql查询数据库是否存在此条数据
-                cur.execute(select_sql)
-                res = cur.fetchone()[0]
-                if res < 1:
-                    res = cur.execute(insert_sql)
-                    conn.commit()
-                    print('url:%s' % (url) + ' 插入成功---------------')
-                else:
-                    print('url:%s' % (url) + ' 已存在----------------')
+                cur.execute(insert_sql)
+                conn.commit()
+                print(course_url + '===============> 数据插入成功')
             except:
                 conn.rollback()
-                print('url:%s' % (url) + ' Error: 插入数据失败')
+                print('===============> insertCourseUrl方法异常')
                 
             # 关闭查询
             cur.close()
@@ -82,8 +76,8 @@ class Database(object):
             conn.close()
     
     # 获取一条未爬取的url
-    def selectUrlNoCraw(self) :
-        conn = pymysql.connect('39.106.154.2', 'root', 'root', 'maven')
+    def selectCourseUrlNoCraw(self) :
+        conn = pymysql.connect(host='39.106.154.2', user='root', password='root', database='maven', charset='utf8')
         cur = conn.cursor()
         select_sql = 'select url from baike_url_list where is_craw = 0 limit 1'
         try:

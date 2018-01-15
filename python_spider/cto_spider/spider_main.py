@@ -22,19 +22,19 @@ class SpiderMain(object):
         self.outputer = html_outputer.HtmlOutputer()
         self.database = Database()
 
-    def craw(self, url):
+    def craw(self, video_url,video_id):
         try:
-            html_cont = self.downloader.downloade(url)  # 下载页面数据
-            new_urls = self.parser.parse(url, html_cont)  # 获取url集合
-            for url in new_urls: # 遍历url集合存入数据库
-                self.database.insertUrl(url)
+            html_cont = self.downloader.downloade(video_url)  # 下载页面数据
+            self.parser.parse(video_id, html_cont)  # 获取url集合
         except:
             print('craw failed')
          
         
 if __name__ == '__main__':
     print('========>开始爬取')
-    root_url = 'http://edu.51cto.com/course/558.html'
-    obj_spider = SpiderMain()
-    obj_spider.craw(root_url)
+    for i in range(4000):
+        print(i)
+        video_id,video_url = Database().selectVideoUrlIsCraw()
+        obj_spider = SpiderMain()
+        obj_spider.craw(video_url,video_id)
     print('========>爬取结束')

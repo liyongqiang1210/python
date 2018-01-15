@@ -18,7 +18,7 @@ class Test(object):
         
         url = 'http://edu.51cto.com/center/course/index/list?wwwdh=&page=' # 爬取的网址
        
-        for i in range(1, 189): # 循环遍历所有网址
+        for i in range(118, 150): # 循环遍历所有网址
             
             print('==================>第' + str(i) + '页开始')
             response = request.urlopen(url + str(i)) # 获取响应信息
@@ -42,7 +42,7 @@ class Test(object):
                 print('视频url =======>%s\n视频title ========>%s\n视频价格 ========>%s\n视频课时 ========>%s\n视频学习人数 ========>%s' 
                       % (video_url, video_title, video_price, video_classHour, video_number))
                 
-                db.insertCouserUrl(video_url, video_title, video_classHour, video_number, video_price) # 将数据存储到数据库
+                db.insertVideoUrl(video_url, video_title, video_classHour, video_number, video_price) # 将数据存储到数据库
                 
             time.sleep(10)  # 休眠10秒
             
