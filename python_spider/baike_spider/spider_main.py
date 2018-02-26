@@ -10,7 +10,7 @@ html_cont:页面数据
 @author: Li Yongqiang
 
 '''
-from baike_spider import html_downloader, html_outputer, html_parser
+from baike_spider import html_downloader, html_parser, html_outputer
 from baike_spider.database import Database
 
 
