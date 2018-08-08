@@ -9,15 +9,13 @@ Created on 2017年12月12日
 @author: Li Yongqiang
 
 '''
-from bokeyuan_spider import html_downloader, html_parser, html_outputer, \
-	database
+import html_downloader, html_parser, html_outputer, database
 
 
 class SpiderMain(object):
 
 	def __init__(self):
 		# html页面下载器
-		self.downloader = html_downloader.HtmlDownloader()
 		# html页面分析器
 		self.parser = html_parser.HtmlParsesr()
 		# 爬取数据输出器
@@ -33,8 +31,8 @@ class SpiderMain(object):
 			# 分析获取爬取页面的我们需要url与数据
 			new_urls = self.parser.parse(html_data)
 			
-			for url in new_urls :
-				self.database.insertUrl(url, url_type, '')
+			# for url in new_urls :
+			# 	self.database.insertUrl(url, url_type, '')
 		except :
 				print('craw falied !!!')
 

@@ -27,8 +27,8 @@ class SpiderMain(object):
             try:
                 html_cont = self.downloader.downloade(self.database.selectUrlNoCraw())
                 new_urls= self.parser.parse(self.database.selectUrlNoCraw(), html_cont)
-                for url in new_urls:
-                    self.database.insertUrl(url)
+                # for url in new_urls:
+                #     self.database.insertUrl(url)
             except:
                 print('craw failed')
          
