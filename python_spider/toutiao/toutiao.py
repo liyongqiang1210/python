@@ -104,7 +104,7 @@ class Spider(object):
 if __name__ == '__main__':
     toutiaoSpider = Spider()
     toutiaoSpider.open_driver()
-    html = toutiaoSpider.html_downloader_dynamic('https://www.toutiao.com/ch/news_entertainment/')
+    html = toutiaoSpider.html_downloader_dynamic('https://www.toutiao.com/ch/news_sports/')
     toutiaoSpider.html_parser_dynamic(html)
     toutiaoSpider.close_driver()
 
