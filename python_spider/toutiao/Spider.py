@@ -17,6 +17,13 @@ from selenium.webdriver.chrome.options import Options
 
 class Spider(object):
 
+    # 定义文章类型列表集合
+    NEWS_TYPE_LIST = {
+        'news_tech','news_entertainment','news_game','news_sports',
+        'news_car','news_finance','funny','news_military','news_fashion','news_discovery',
+        'news_history','news_world','news_travel','news_baby','news_essay','news_food'
+        }
+
     # 打开driver方法
     def open_driver(self):
         global driver
@@ -62,7 +69,7 @@ class Spider(object):
             print('html参数为None')
             return
         #  声明一个新闻对象列表对象
-        news_object_List = []
+        news_object_list = []
         # 将html转换成BeautifulSoup对象
         soup = BeautifulSoup(html, 'html.parser')
         # 筛选出我们需要的内容
@@ -89,29 +96,31 @@ class Spider(object):
                     img_url = ''
                 # 创建文章字符串对象
                 news_object = "{'title':'" + title + "','title_href':'" + title_href + "','source':'" + source + "','img_url':'" + img_url + "'}"
-                news_object_List.append(news_object)
+                news_object_list.append(news_object)
             except Exception as e:
                 print('异常：' + e)
             continue
+        return json.dumps(news_object_list, ensure_ascii=False)
 
-        return json.dumps(news_object_List, ensure_ascii=False)
-
-
+    # 爬虫主函数
+    def main(self):
+        try:
+            self.open_driver()
+            for news_type in Spider.NEWS_TYPE_LIST:
+                print('=======================>' + news_type + '爬虫启动')
+                html = self.html_downloader_dynamic('https://www.toutiao.com/ch/' + news_type + '/')
+                news_object_list = self.html_parser_dynamic(html)
+                print(news_object_list)
+                print('=======================>' + news_type + '爬虫结束')
+        except Exception as e:
+            raise e
+        finally:
+            self.close_driver() # 关闭driver
+        
+        
 if __name__ == '__main__':
-    newsTypeList = {
-        'news_tech','news_entertainment','news_game','news_sports',
-        'news_car','news_finance','funny','news_military','news_fashion','news_discovery',
-        'news_history','news_world','news_travel','news_baby','news_essay','news_food'
-        }
-    toutiaoSpider = Spider()
-    toutiaoSpider.open_driver()
-    for newsType in newsTypeList:
-        print('=======================>' + newsType + '爬虫启动')
-        html = toutiaoSpider.html_downloader_dynamic('https://www.toutiao.com/ch/' + newsType + '/')
-        news_object_List = toutiaoSpider.html_parser_dynamic(html)
-        print(news_object_List)
-        print('=======================>' + newsType + '爬虫结束')
-    toutiaoSpider.close_driver()
+    spider = Spider()
+    spider.main()
 
 
 
