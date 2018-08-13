@@ -107,10 +107,9 @@ class CnblogsSpider(object):
             print('=======================>driver已打开')
             for news_type in CnblogsSpider.NEWS_TYPE_LIST:
                 print('=======================>' + news_type + '爬虫启动')
-                for page in range(1,200):
-                    html = self.html_downloader_static(news_type, page)
-                    news_object_list = self.html_parser_static(html)
-                    print(news_object_list)
+                html = self.html_downloader_static(news_type)
+                news_object_list = self.html_parser_static(html)
+                print(news_object_list)
                 print('=======================>' + news_type + '爬虫结束')
         except Exception as e:
             raise e

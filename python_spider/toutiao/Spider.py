@@ -116,7 +116,7 @@ class Spider(object):
                 print('=======================>' + news_type + '爬虫启动')
                 html = self.html_downloader_dynamic('https://www.toutiao.com/ch/' + news_type + '/')
                 news_object_list = self.html_parser_dynamic(html)
-                if news_object_list != "" && news_object_list is not None:
+                if news_object_list != "":
                     print(news_object_list)
                 print('=======================>' + news_type + '爬虫结束')
         except Exception as e:
