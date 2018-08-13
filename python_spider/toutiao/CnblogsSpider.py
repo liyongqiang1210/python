@@ -79,13 +79,13 @@ class CnblogsSpider(object):
                 else:
                     continue
                 # 获取博客部分内容
-                b = div.find_all('a', class_='post_item_summary')
+                b = div.find_all('p', class_='post_item_summary')
                 if len(b) > 0:
-                    content = b[0].string
+                    content = b[0].find(text=re.compile('...')) # 获取文本中包含'...'字符串的内容
                 else:
                     continue
                 # 获取博客作者和url
-                c = div.find_all('lightblue')
+                c = div.find_all('a',class_='lightblue')
                 if len(c) > 0:
                     author_name = c[0].string
                     author_url = c[0].get('href')
@@ -94,12 +94,12 @@ class CnblogsSpider(object):
                 # 获取发布时间
                 d = div.find_all('div', class_='post_item_foot')
                 if len(d) > 0:
-                    release_time = d[0].string
+                    time = d[0].find(text=re.compile('发布于')) # 获取文本中包含'发布于'字符串的内容
+                    release_time = time[10:len(time)-6]
                 else:
                     continue
                 # 创建博客字符串对象
-                print("{'title':'" + title + "','title_href':'" + title_href + "','content':'" + content + "','author_name':'" + author_name + "'}")
-                news_object = "{'title':'" + title + "','title_href':'" + title_href + "','content':'" + content + "','author_name':'" + author_name + "'}"
+                news_object = "{'title':'" + title + "','title_href':'" + title_href + "','content':'" + content + "','author_name':'" + author_name + "','author_url':'" + author_url + "','release_time':'" + release_time + "'}"
                 news_object_list.append(news_object)
             except Exception as e:
                 print('异常：' + e)
@@ -114,8 +114,7 @@ class CnblogsSpider(object):
                 print('=======================>' + news_type + '爬虫启动')
                 html = self.html_downloader_static(news_type)
                 news_object_list = self.html_parser_static(html)
-                if news_object_list != "":
-                    print(news_object_list)
+                print(news_object_list)
                 print('=======================>' + news_type + '爬虫结束')
         except Exception as e:
             raise e
