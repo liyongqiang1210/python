@@ -18,9 +18,12 @@ from selenium.webdriver.chrome.options import Options
 class CnblogsSpider(object):
 
     # 定义博客类型列表集合
+    # NEWS_TYPE_LIST = {
+    #     'java','cpp','php','python','ruby','c','go','r','108702','design','dp','javascript','jquery','html5',
+    #     'android','ios','sqlserver','oracle','mysql','nosql','bigdata','linux'
+    #     }
     NEWS_TYPE_LIST = {
-        'java','cpp','php','python','ruby','c','go','r','108702','design','dp','javascript','jquery','html5',
-        'android','ios','sqlserver','oracle','mysql','nosql','bigdata','linux'
+        'java'
         }
 
     # 打开driver方法
@@ -73,7 +76,6 @@ class CnblogsSpider(object):
                     title = a[0].string
                     # 获取博客url
                     title_href = a[0].get('href')
-                    
                 else:
                     continue
                 # 获取博客部分内容
@@ -96,6 +98,7 @@ class CnblogsSpider(object):
                 else:
                     continue
                 # 创建博客字符串对象
+                print("{'title':'" + title + "','title_href':'" + title_href + "','content':'" + content + "','author_name':'" + author_name + "'}")
                 news_object = "{'title':'" + title + "','title_href':'" + title_href + "','content':'" + content + "','author_name':'" + author_name + "'}"
                 news_object_list.append(news_object)
             except Exception as e:
