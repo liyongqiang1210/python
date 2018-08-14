@@ -60,9 +60,9 @@ class FengHuangSpider(object):
         li_list = soup_div.find_all('li')
         for li in li_list:
             soup = BeautifulSoup(str(li))
-            news_release_time = soup.find('h4').get_text()
-            news_title = soup.find('a').get_text()
-            news_url = soup.find('a').get('href')
+            news_release_time = soup.find('h4').get_text() # 新闻发布时间
+            news_title = soup.find('a').get_text() # 新闻标题
+            news_url = soup.find('a').get('href') # 新闻url
             print("news_release_time:" + str(datetime.datetime.now().year) + "/" + news_release_time + ",news_title:" + news_title + ",news_url:" + news_url)
 
     def main(self):
