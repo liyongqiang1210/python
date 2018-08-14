@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Date    : 2018-08-07
-# @Author  : liyongqiang
-# @Link    : ${link}
+# @Author  : Li Yongqiang
 # @Version : 0.0.1
 
-import os
 import re
 import time
 import random
@@ -15,7 +13,12 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-class Spider(object):
+"""
+
+今日头条爬虫
+
+"""
+class TouTiaoSpider(object):
 
     # 定义文章类型列表集合
     NEWS_TYPE_LIST = {
@@ -31,7 +34,7 @@ class Spider(object):
         chrome_options = Options()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
-        driver_path = 'E:\python\Scripts\chromedriver.exe' #本地chormedriver.exe文件目录
+        driver_path = 'E:\Program Files (x86)\python\Scripts\chromedriver.exe' #本地chormedriver.exe文件目录
         driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path)
         # 设置最长的超时时间
         # driver.set_page_load_timeout(10)
@@ -112,7 +115,7 @@ class Spider(object):
     def main(self):
         try:
             self.open_driver()
-            for news_type in Spider.NEWS_TYPE_LIST:
+            for news_type in TouTiaoSpider.NEWS_TYPE_LIST:
                 print('=======================>' + news_type + '爬虫启动')
                 html = self.html_downloader_dynamic('https://www.toutiao.com/ch/' + news_type + '/')
                 news_object_list = self.html_parser_dynamic(html)
@@ -126,7 +129,7 @@ class Spider(object):
         
         
 if __name__ == '__main__':
-    spider = Spider()
+    spider = TouTiaoSpider()
     spider.main()
 
 
