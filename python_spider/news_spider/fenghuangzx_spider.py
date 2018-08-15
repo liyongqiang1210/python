@@ -5,7 +5,7 @@
 
 """
 
-这个类是凤凰资讯新闻网站爬虫
+凤凰资讯新闻网站爬虫
 
 """
 
@@ -24,12 +24,17 @@ from selenium.webdriver.chrome.options import Options
 凤凰资讯爬虫
 
 """
+
+
 class FengHuangSpider(object):
 
     # 定义文章类型列表集合
     NEWS_TYPE_LIST = {
-        
-        }
+
+    }
+
+    # 创建set集合用来存放新闻
+    NEWS_OBJECT_LIST = []
 
     # 打开driver方法
     def open_driver(self):
@@ -38,9 +43,11 @@ class FengHuangSpider(object):
         chrome_options = Options()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
-        driver_path = 'E:\Program Files (x86)\python\Scripts\chromedriver.exe' #本地chormedriver.exe文件目录
-        driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path)
-        
+        # 本地chormedriver.exe文件目录
+        driver_path = 'E:\Program Files (x86)\python\Scripts\chromedriver.exe'
+        driver = webdriver.Chrome(
+            chrome_options=chrome_options, executable_path=driver_path)
+
     # 关闭driver方法
     def close_driver(self):
         driver.quit()
@@ -51,32 +58,39 @@ class FengHuangSpider(object):
         return html
 
     def get_data(self, html):
-        # 创建新闻集合
-        news_object_list = []
+        
         # 筛选出我们所需的信息
         soup_html = BeautifulSoup(html, 'html.parser')
         div = soup_html.find('div', class_='newsList')
         soup_div = BeautifulSoup(str(div))
         li_list = soup_div.find_all('li')
+        
         for li in li_list:
             soup = BeautifulSoup(str(li))
-            news_release_time = soup.find('h4').get_text() # 新闻发布时间
-            news_title = soup.find('a').get_text() # 新闻标题
-            news_url = soup.find('a').get('href') # 新闻url
-            print("news_release_time:" + str(datetime.datetime.now().year) + "/" + news_release_time + ",news_title:" + news_title + ",news_url:" + news_url)
+            news_release_time = soup.find('h4').get_text()  # 新闻发布时间
+            news_title = soup.find('a').get_text()  # 新闻标题
+            news_url = soup.find('a').get('href')  # 新闻url
+            news_object = '{news_release_time:' + str(datetime.datetime.now().year) + '/' \
+            + news_release_time + ',news_title:' + news_title + ',news_url:' + news_url + '}'
+
+            # 去除重复数据
+            if news_object not in FengHuangSpider.NEWS_OBJECT_LIST:
+                FengHuangSpider.NEWS_OBJECT_LIST.append(news_object)
+
+        print(json.dumps(FengHuangSpider.NEWS_OBJECT_LIST, ensure_ascii=False))
 
     def main(self):
         try:
             self.open_driver()
-            html = self.get_html('http://news.ifeng.com/listpage/11502/0/1/rtlist.shtml')
+            html = self.get_html( \
+                'http://news.ifeng.com/listpage/11502/0/1/rtlist.shtml')
             self.get_data(html)
         except Exception as e:
             raise e
         finally:
             self.close_driver()
-        
-        
-        
+
+
 if __name__ == '__main__':
     spider = FengHuangSpider()
     spider.main()
