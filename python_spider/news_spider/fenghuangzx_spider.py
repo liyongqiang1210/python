@@ -52,11 +52,13 @@ class FengHuangSpider(object):
     def close_driver(self):
         driver.quit()
 
+    # 获取html页面数据
     def get_html(self, url):
         driver.get(url)
         html = driver.page_source
         return html
 
+    # 获取我们需要的数据
     def get_data(self, html):
         
         # 筛选出我们所需的信息
@@ -79,12 +81,29 @@ class FengHuangSpider(object):
 
         print(json.dumps(FengHuangSpider.NEWS_OBJECT_LIST, ensure_ascii=False))
 
+
+    def get_top10_data(self, html):
+        soup_html = BeautifulSoup(html, 'html.parser')
+        div = soup_html.find('div', class_='top10')
+        soup_div = BeautifulSoup(str(div))
+        a_list = soup_div.find_all('a')
+        i = 1
+        for a in a_list:
+            if i > 10:
+                break
+            news_title = a.get_text()
+            news_url = a.get('href')
+            news_ranking = i
+            print("{news_title:" + news_title + ", news_url:"+ news_url + ", news_ranking:" + str(news_ranking) + "}")
+            i = i+1
+
     def main(self):
         try:
             self.open_driver()
             html = self.get_html( \
                 'http://news.ifeng.com/listpage/11502/0/1/rtlist.shtml')
-            self.get_data(html)
+            # self.get_data(html)
+            self.get_top10_data(html)
         except Exception as e:
             raise e
         finally:
