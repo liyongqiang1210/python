@@ -28,13 +28,11 @@ from selenium.webdriver.chrome.options import Options
 
 class FengHuangSpider(object):
 
-    # 定义文章类型列表集合
-    NEWS_TYPE_LIST = {
+    # 存放24小时阅读排行榜新闻列表集合
+    NEWS_RANKING_LIST = []
 
-    }
-
-    # 创建set集合用来存放新闻
-    NEWS_OBJECT_LIST = []
+    # 存放即时新闻
+    NEWS_INSTANT_LIST = []
 
     # 打开driver方法
     def open_driver(self):
@@ -58,8 +56,8 @@ class FengHuangSpider(object):
         html = driver.page_source
         return html
 
-    # 获取我们需要的数据
-    def get_data(self, html):
+    # 获取凤凰资讯即时新闻数据
+    def get_instant_data(self, html):
         
         # 筛选出我们所需的信息
         soup_html = BeautifulSoup(html, 'html.parser')
@@ -72,17 +70,23 @@ class FengHuangSpider(object):
             news_release_time = soup.find('h4').get_text()  # 新闻发布时间
             news_title = soup.find('a').get_text()  # 新闻标题
             news_url = soup.find('a').get('href')  # 新闻url
-            news_object = '{news_release_time:' + str(datetime.datetime.now().year) + '/' \
-            + news_release_time + ',news_title:' + news_title + ',news_url:' + news_url + '}'
+            news_instant = '{news_release_time:' + \
+                           str(datetime.datetime.now().year) + '/' \
+                           + news_release_time + ',news_title:' + news_title \
+                           + ',news_url:' + news_url + '}'
 
             # 去除重复数据
-            if news_object not in FengHuangSpider.NEWS_OBJECT_LIST:
-                FengHuangSpider.NEWS_OBJECT_LIST.append(news_object)
+            if news_instant not in FengHuangSpider.NEWS_INSTANT_LIST:
+                FengHuangSpider.NEWS_INSTANT_LIST.append(news_instant)
 
-        print(json.dumps(FengHuangSpider.NEWS_OBJECT_LIST, ensure_ascii=False))
+        # 将数据转换为json格式
+        json_instant = json.dumps(FengHuangSpider.NEWS_INSTANT_LIST, 
+                       ensure_ascii=False)
 
+        return json_instant
 
-    def get_top10_data(self, html):
+    # 获取凤凰资讯排行前十新闻数据
+    def get_ranking_data(self, html):
         soup_html = BeautifulSoup(html, 'html.parser')
         div = soup_html.find('div', class_='top10')
         soup_div = BeautifulSoup(str(div))
@@ -93,17 +97,44 @@ class FengHuangSpider(object):
                 break
             news_title = a.get_text()
             news_url = a.get('href')
-            news_ranking = i
-            print("{news_title:" + news_title + ", news_url:"+ news_url + ", news_ranking:" + str(news_ranking) + "}")
+            ranking = i
             i = i+1
+            news_ranking = "{news_title:" + news_title + \
+                           ", news_url:"+ news_url + ", ranking:" + \
+                           str(ranking) + "}";
+            
+            # 去除重复数据
+            if news_ranking not in FengHuangSpider.NEWS_RANKING_LIST:
+                FengHuangSpider.NEWS_RANKING_LIST.append(news_ranking)
+        
+        # 转换成json格式数据
+        json_ranking = json.dumps(FengHuangSpider.NEWS_RANKING_LIST, 
+                          ensure_ascii=False)
+
+        return json_ranking
+
+    # 获取凤凰网历史文章数据
+    def get_history_data(self, html):
+
+        html = BeautifulSoup(html,'html.parser')
+        div_list = html.find_all('div', class_='box_list clearfix')
+        for div in div_list:
+            print(div)
+            
 
     def main(self):
         try:
             self.open_driver()
-            html = self.get_html( \
-                'http://news.ifeng.com/listpage/11502/0/1/rtlist.shtml')
-            # self.get_data(html)
-            self.get_top10_data(html)
+            # html = self.get_html( \
+            #     'http://news.ifeng.com/listpage/11502/0/1/rtlist.shtml')
+            # instant_news = self.get_instant_data(html)
+            # ranking_news = self.get_ranking_data(html)
+            # print(instant_news)
+            # print(ranking_news)
+            
+            html = self.get_html(
+                   'http://news.ifeng.com/listpage/4765/1/list.shtml')
+            self.get_history_data(html)
         except Exception as e:
             raise e
         finally:
