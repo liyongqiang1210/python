@@ -5,20 +5,25 @@
 # @Link    : ${link}
 # @Version : 0.0.1
 
+import os
 import re
 import time
+import random
 import json
+import urllib.request
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-
 class CnblogsSpider(object):
 
     # 定义博客类型列表集合
+    # NEWS_TYPE_LIST = {
+    #     'java','cpp','php','python','ruby','c','go','r','108702','design','dp','javascript','jquery','html5',
+    #     'android','ios','sqlserver','oracle','mysql','nosql','bigdata','linux'
+    #     }
     NEWS_TYPE_LIST = {
-        'java', 'cpp', 'php', 'python', 'ruby', 'c', 'go', 'r', '108702', 'design', 'dp', 'javascript', 'jquery', 'html5',
-        'android', 'ios', 'sqlserver', 'oracle', 'mysql', 'nosql', 'bigdata', 'linux'
+        'java'
         }
 
     # 打开driver方法
@@ -28,7 +33,7 @@ class CnblogsSpider(object):
         chrome_options = Options()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
-        driver_path = 'E:\python\Scripts\chromedriver.exe'  # 本地chormedriver.exe文件目录
+        driver_path = 'E:\python\Scripts\chromedriver.exe' #本地chormedriver.exe文件目录
         driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path)
         
     # 关闭driver方法
@@ -37,16 +42,19 @@ class CnblogsSpider(object):
 
     # 下载html静态页面方法
     # 需要传入要下载页面的url
-    def html_downloader_static(self, news_type, page):
+    def html_downloader_static(self,type):
         if type is None:
             print('url参数为None')
             return None
-        # 将页面滚动条向下滚动
-        url = 'https://www.cnblogs.com/cate/' + news_type + '/#p' + str(page)
-        # 浏览器打开url
-        driver.get(url)
+        # 分页获取
+        for i in range(1, 10):
+            # 将页面滚动条向下滚动
+            url = 'https://www.cnblogs.com/cate/' + type + '/#p' + str(i)
+            # 浏览器打开url
+            driver.get(url)
         html = driver.page_source
         return html
+
 
     # 解析html页面方法
     def html_parser_static(self, html):
@@ -58,7 +66,7 @@ class CnblogsSpider(object):
         # 将html转换成BeautifulSoup对象
         soup = BeautifulSoup(html, 'html.parser')
         # 筛选出我们需要的内容
-        div_list = soup.find_all('div', class_='post_item')
+        div_list = soup.find_all('div',class_='post_item')
         # 遍历筛选出的内容
         for div in div_list:
             try:
@@ -73,11 +81,11 @@ class CnblogsSpider(object):
                 # 获取博客部分内容
                 b = div.find_all('p', class_='post_item_summary')
                 if len(b) > 0:
-                    content = b[0].find(text=re.compile('...'))  # 获取文本中包含'...'字符串的内容
+                    content = b[0].find(text=re.compile('...')) # 获取文本中包含'...'字符串的内容
                 else:
                     continue
                 # 获取博客作者和url
-                c = div.find_all('a', class_='lightblue')
+                c = div.find_all('a',class_='lightblue')
                 if len(c) > 0:
                     author_name = c[0].string
                     author_url = c[0].get('href')
@@ -86,14 +94,12 @@ class CnblogsSpider(object):
                 # 获取发布时间
                 d = div.find_all('div', class_='post_item_foot')
                 if len(d) > 0:
-                    time = d[0].find(text=re.compile('发布于'))  # 获取文本中包含'发布于'字符串的内容
-                    release_time = time[10:len(time) - 6]
+                    time = d[0].find(text=re.compile('发布于')) # 获取文本中包含'发布于'字符串的内容
+                    release_time = time[10:len(time)-6]
                 else:
                     continue
                 # 创建博客字符串对象
-                news_object = "{'title':'" + title + "','title_href':'" + title_href + "','content':'" + \
-                                content + "','author_name':'" + author_name + "','author_url':'" + author_url + \
-                                 "','release_time':'" + release_time + "'}"
+                news_object = "{'title':'" + title + "','title_href':'" + title_href + "','content':'" + content + "','author_name':'" + author_name + "','author_url':'" + author_url + "','release_time':'" + release_time + "'}"
                 news_object_list.append(news_object)
             except Exception as e:
                 print('异常：' + e)
@@ -104,7 +110,6 @@ class CnblogsSpider(object):
     def main(self):
         try:
             self.open_driver()
-            print('=======================>driver已打开')
             for news_type in CnblogsSpider.NEWS_TYPE_LIST:
                 print('=======================>' + news_type + '爬虫启动')
                 html = self.html_downloader_static(news_type)
@@ -114,11 +119,13 @@ class CnblogsSpider(object):
         except Exception as e:
             raise e
         finally:
-            self.close_driver()  # 关闭driver
-            print('=======================>driver已关闭')
+            self.close_driver() # 关闭driver
         
         
 if __name__ == '__main__':
     spider = CnblogsSpider()
     spider.main()
+
+
+
 
