@@ -34,6 +34,9 @@ class FengHuangSpider(object):
     # 存放即时新闻
     NEWS_INSTANT_LIST = []
 
+    # 历史资讯
+    NEWS_HISTORY_LIST = []
+
     # 打开driver方法
     def open_driver(self):
         global driver
@@ -119,12 +122,28 @@ class FengHuangSpider(object):
         html = BeautifulSoup(html,'html.parser')
         div_list = html.find_all('div', class_='box_list clearfix')
         for div in div_list:
-            print(div)
-            
+            news_release_time = div.find("span").get_text();
+            h2 = BeautifulSoup(str(div.find("h2")),'html.parser');
+            news_url = h2.find("a").get("href");
+            news_title = h2.find("a").get("title");
+            news_content = div.find("p").get_text();
+            news_image = div.find("img").get("src")
+            news_history = "{news_title:'" + news_title + "',news_image:'" \
+                           + news_image + "',news_url:'" + news_url \
+                           + "',news_content:'" + news_content + "',news_release_time:'" \
+                           + news_release_time + "'}";
+    
+            if news_history not in FengHuangSpider.NEWS_HISTORY_LIST:
+                FengHuangSpider.NEWS_HISTORY_LIST.append(news_history)
+
+        json_history = json.dumps(FengHuangSpider.NEWS_HISTORY_LIST,ensure_ascii=False)
+
+        return json_history
 
     def main(self):
         try:
             self.open_driver()
+            # 获取即时资讯和前十资讯
             # html = self.get_html( \
             #     'http://news.ifeng.com/listpage/11502/0/1/rtlist.shtml')
             # instant_news = self.get_instant_data(html)
@@ -132,9 +151,10 @@ class FengHuangSpider(object):
             # print(instant_news)
             # print(ranking_news)
             
+            # 获取历史资讯数据
             html = self.get_html(
-                   'http://news.ifeng.com/listpage/4765/1/list.shtml')
-            self.get_history_data(html)
+                   'https://news.ifeng.com/listpage/4763/1/list.shtml')
+            print(self.get_history_data(html))
         except Exception as e:
             raise e
         finally:
