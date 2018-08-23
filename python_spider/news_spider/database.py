@@ -18,6 +18,8 @@ class Database(object):
 
     # 插入资讯的方法
     def insert_news(self,news_list):
+
+        print(news_list)
         
         # 打开数据连接
         conn = pymysql.connect(host='127.0.0.1', user='root', 
@@ -30,17 +32,19 @@ class Database(object):
         i = 0
         for news in news_list:
             if i == len(news_list):
-                insert_sql + news + ";"
-            insert_sql + news + ";"
+                insert_sql += str(insert_sql) + str(news) + ";"
+            else:
+                insert_sql += str(insert_sql) + str(news) + ","
             i = i+1
         
         try:
-            cur.execute(insert_sql)
-            conn.commit()
+            print(insert_sql)
+            # cur.execute(str(insert_sql))
+            # conn.commit()
             print('===================> 插入成功')
-        except:
+        except Exception as e:
             conn.rollback()
-            print('===================> 插入失败')
+            print('===================> 插入失败' + e)
             
         cur.close()  # 关闭查询
         conn.close()  # 关闭数据库连接

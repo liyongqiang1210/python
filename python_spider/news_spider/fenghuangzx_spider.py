@@ -136,46 +136,54 @@ class FengHuangSpider(object):
         html = BeautifulSoup(html,'html.parser')
         div_list = html.find_all('div', class_='box_list clearfix')
         for div in div_list:
-            news_release_time = div.find("span").get_text()
-            h2 = BeautifulSoup(str(div.find("h2")),'html.parser')
-            news_url = h2.find("a").get("href")
-            news_title = h2.find("a").get("title")
-            news_content = div.find("p").get_text()
-            news_image = div.find("img").get("src")
-            news_history = "('" + news_title + "','" + news_content + "','" \
-                            + news_image + "','" + news_release_time + "','" \
-                            + news_type + "','" + news_url + "','" + \
-                              FengHuangSpider.NEWS_WEBSITE + "','" + create_time + "')";
-    
+            try:
+                news_release_time = div.find("span").get_text()
+                h2 = BeautifulSoup(str(div.find("h2")),'html.parser')
+                news_url = h2.find("a").get("href")
+                news_title = h2.find("a").get("title")
+                news_content = div.find("p").get_text()
+                if div.find("img") != "" and div.find("img") != None:
+                    news_image = div.find("img").get("src")
+                news_image = ""
+                news_history = "('" + str(news_title) + "','" + str(news_content) + "','" \
+                                + str(news_image) + "','" + str(news_release_time) + "','" \
+                                + str(news_type) + "','" + str(news_url) + "','" + \
+                                  FengHuangSpider.NEWS_WEBSITE + "','" + str(FengHuangSpider.CREATE_TIME) + "')";
+            except Exception as e:
+                print("get_history_data()方法出现异常：" + e)
+                continue
+
             if news_history not in FengHuangSpider.NEWS_HISTORY_LIST:
                 FengHuangSpider.NEWS_HISTORY_LIST.append(news_history)
 
         # 转换成json格式
         # json_history = json.dumps(FengHuangSpider.NEWS_HISTORY_LIST,ensure_ascii=False)
 
-        return FengHuangSpider.NEWS_HISTORY_LIST
-
     # 爬取全部历史资讯方法
     def news_history_all_main(self):
-        history_type = [""]
         page_url = "https://news.ifeng.com/listpage/4762/1/list.shtml"
+        i = 0
         # 获取历史资讯数据
-        while page_url != "":
+        while page_url != "" and i < 9:
             try:
+                print(page_url)
+
+                # 模拟点击下一页按钮
                 html = self.get_html(page_url)
                 elem_next_page = driver.find_element_by_id("pagenext") # 根据id找到下一页按钮
                 elem_next_page.click() # 模拟点击下一页按钮
                 page_url = driver.current_url # 下一页要打开的url
-                self.get_html(page_url)
-                print(page_url)
+                
+                # 获取数据
+                self.get_history_data(html)
                 time.sleep(1)
+                i = i+1
             except Exception as e:
-                print("没有下一页了")
+                print("news_history_all_main()方法出现异常：" + e)
                 break
                 
 
-        FengHuangSpider.database.insert_news(FengHuangSpider.NEWS_HISTORY_LIST)
-        print(FengHuangSpider.NEWS_HISTORY_LIST)
+        # FengHuangSpider.database.insert_news(FengHuangSpider.NEWS_HISTORY_LIST)
 
 
 
