@@ -20,12 +20,6 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-"""
-
-凤凰资讯爬虫
-
-"""
-
 
 class FengHuangSpider(object):
 
