@@ -7,7 +7,7 @@
 """
     新浪微博爬虫
 """
-
+import time
 from spider import Spider
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -16,45 +16,45 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 
+
 class WeiBoSpider(Spider):
-	"""docstring for WeiBoSpider"""
+    """docstring for WeiBoSpider"""
 
-	def get_weibo_html(self):
-		driver = self.open_driver()
-		driver.get("https://weibo.com/")
-		html = driver.page_source
-		print(html)
-		self.close_driver()
+    def get_weibo_html(self):
+        driver = self.open_driver()
+        driver.get('https://weibo.com/')
+        html = driver.page_source
+        print(html)
+        self.close_driver()
 
-	def get_cookie_from_weibo(self, username, password):
-		global driver
-		# chrome浏览器驱动，无头模式
-		chrome_options = Options()
-		chrome_options.add_argument('--headless')
-		chrome_options.add_argument('--disable-gpu')
-		# 本地chormedriver.exe文件目录
-		driver_path = 'E:\Program Files (x86)\python\Scripts\chromedriver.exe'
-		driver = webdriver.Chrome(
-			chrome_options=chrome_options, executable_path=driver_path)
-		driver.get('https://weibo.cn')
-		assert "微博" in driver.title
-		login_link = driver.find_element_by_link_text('登录')
-		ActionChains(driver).move_to_element(login_link).click().perform()
-		login_name = WebDriverWait(driver, 10).until(
-			EC.visibility_of_element_located((By.ID, "loginName"))
-		)
-		login_password = driver.find_element_by_id("loginPassword")
-		login_name.send_keys(username)
-		login_password.send_keys(password)
-		login_button = driver.find_element_by_id("loginAction")
-		login_button.click()
-		cookie = driver.get_cookies()
-		print(driver.page_source)
-		driver.close()
-		return cookie
+    def get_cookie_from_weibo(self, username, password):
+
+        driver_path = 'E:\Program Files (x86)\python\Scripts\chromedriver.exe'
+        driver = webdriver.Chrome(executable_path=driver_path)
+        driver.get('https://weibo.com/')
+        driver.maximize_window()#将浏览器最大化
+        time.sleep(10) # 等待10s等待浏览器加载页面
+        username_elem = driver.find_element_by_name('username') # 根据name属性找到用户名输入框
+        username_elem.send_keys(username) # 填写用户名
+        password_elem = driver.find_element_by_name('password')
+        password_elem.send_keys(password) # 填写密码
+        login = driver.find_element_by_class_name("login_btn") # 根据class属性找到登录按钮
+        login.click() # 点击登录按钮
+        time.sleep(2)
+        # 逐渐滚动浏览器窗口,使ajax逐渐加载
+        for i in range(1, 30):
+            # 将页面滚动条向下滚动
+            js = 'var q=document.documentElement.scrollTop=' + str(1000 * i)
+            # 执行js
+            driver.execute_script(js)
+            # 等待1s
+            time.sleep(1)
+
+        # print(driver.page_source)
+        driver.quit()
+
 
 
 if __name__ == '__main__':
-	weibospider = WeiBoSpider()
-	cookie = weibospider.get_cookie_from_weibo("18330902178","L18330902178")
-	print(cookie)
+    weibospider = WeiBoSpider()
+    cookie = weibospider.get_cookie_from_weibo('18330902178', 'L18330902178')

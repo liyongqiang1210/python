@@ -35,7 +35,7 @@ class TouTiaoSpider(object):
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
         driver_path = 'E:\Program Files (x86)\python\Scripts\chromedriver.exe' #本地chormedriver.exe文件目录
-        driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path)
+        driver = webdriver.Chrome(executable_path=driver_path)
         # 设置最长的超时时间
         # driver.set_page_load_timeout(10)
         
@@ -58,7 +58,7 @@ class TouTiaoSpider(object):
             # 执行js
             driver.execute_script(js)
             # 等待1s
-            time.sleep(2)
+            time.sleep(1)
         # 截屏方法
         # driver.save_screenshot('E:/original.jpg')
         # 获取页面源码
