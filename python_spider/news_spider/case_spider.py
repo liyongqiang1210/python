@@ -21,10 +21,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 class CourtSpider(Spider):
     """docstring for CourtSpider"""
     # 打开浏览器
-    driver_path = 'E:\python\Scripts\chromedriver.exe'
+    driver_path = 'E:\Program Files (x86)\python\Scripts\chromedriver.exe'
     driver = webdriver.Chrome(executable_path=driver_path)
     driver.get('http://wenshu.court.gov.cn/')
-    driver.maximize_window()  # 将浏览器最大化
+    # driver.maximize_window()  # 将浏览器最大化
 
     def get_index_html(self):
         
@@ -33,7 +33,7 @@ class CourtSpider(Spider):
         citys = soup.find_all(class_="map_p");  # 获取所有省会城市的法院
         for city in citys:
             name = city['class'][1]  # 获取法院标签的class属性的唯一class名
-            print(name)
+            # print(name)
             city = self.driver.find_element_by_class_name(name)  # 根据唯一的class名获取到标签
             city.click()  # 点击标签
             time.sleep(random.randint(5, 10))  # 等待页面加载完成
@@ -47,15 +47,16 @@ class CourtSpider(Spider):
         highest_court_list = []  # 最高级法院
         high_court_list = []  # 高级法院
         middle_court_list = []  # 中级法院
+        province_id = ""  # 省id
         # 开始解析页面
         soup = BeautifulSoup(html)
         court_html = soup.find(class_="region")  # 获取中高级法院,最高法院html
         courts_soup = BeautifulSoup(str(court_html))
+        # 筛选出非基础法院信息标签
         court_element_list = courts_soup.find_all(attrs={"target": "_blank"})  # 获取法院标签
         for court_element in court_element_list:
-            province_id = ""  # 省id
             city_id = ""  # 城市id
-            court_name = court_element.get_text()  # 获取到中高级，最高级法院名
+            court_name = court_element.get_text()  # 获取到中高级，高级法院名
             
             # 判断法院类型
             if "最高" in court_name:  # 最高级
@@ -64,42 +65,48 @@ class CourtSpider(Spider):
                 # self.insert_court(highest_court_list, 1, "110000", "", "")
             elif "高级" in court_name:  # 高级
                 # 获取省id
-                province_name = str(court_name)[:-6];
-                province_id = self.select_province_id(province_name);
+                province_name = str(court_name)[:-6]
+                province_id = self.select_province_id(province_name)
+                court = {'court_name': court_name,'province_id': province_id, 'city_id':'','area_id':'','court_level':2}
                 # 插入数据
-                high_court_list.append(court_name)
+                high_court_list.append(court)
+                # 中级法院
+                high_court_json = json.dumps(high_court_list)
 #                 self.insert_court(high_court_list, 2, province_id, "", "")
             else:  # 中级
-                if court_name not in "北京市上海市天津市重庆市":
+                if court_name[0:2] not in "北京市上海市天津市重庆市":
                     # 获取城市id
                     length = len(province_name)
                     city_name = str(court_name)[length:-6]
                     city_id = self.select_city_id(city_name)
                 else:
                     # 获取城市id
-                    length = len(province_name)
-                    city_name = str(court_name)[0:3]
-                    city_id = self.select_city_id(city_name)
-                    
+                    city_name = court_name[0:3]
+                    city_id = self.select_province_id(city_name)
+                
+                court = {'court_name': court_name,'province_id': province_id, 'city_id':city_id,'area_id':'','court_level':3}
                 # 插入数据
-                middle_court_list.append(court_name)
+                middle_court_list.append(court)
+                # 中级法院print("中级法院：" + middle_court_json)
+                middle_court_json = json.dumps(middle_court_list)
 #                 self.insert_court(middle_court_list, 3, province_id, city_id, "")
                 
                 # 获取基层法院信息
-#                 try:
-#                     # 获取到鼠标需要悬停地方的标签
-#                     court_link = self.driver.find_element_by_xpath('//a[@href="/List/List?sorttype=1&conditions=searchWord+' + court_name + '+++中级法院:' + court_name + '"]')
-#                     # 获取基层法院
-#                     ActionChains(self.driver).move_to_element(court_link).perform()  # 鼠标悬停到当前法院标签上
-#                     # 获取到带有基层法院标签内容的html
-#                     html = self.driver.page_source
-#                     # 获取当前法院的下属基层法院
-#                     self.get_base_html(html, province_id, city_id, city_name)
-#                 except Exception as e:
-#                     print(e)
-        
-        self.insert_court(high_court_list, 2, "", "", "")
-        self.insert_court(middle_court_list, 3, "", "", "")
+                try:
+                    # 获取到鼠标需要悬停地方的标签
+                    court_link = self.driver.find_element_by_xpath('//a[@href="/List/List?sorttype=1&conditions=searchWord+' + court_name + '+++中级法院:' + court_name + '"]')
+                    # 获取基层法院
+                    ActionChains(self.driver).move_to_element(court_link).perform()  # 鼠标悬停到当前法院标签上
+                    # 获取到带有基层法院标签内容的html
+                    html = self.driver.page_source
+                    # 获取当前法院的下属基层法院
+                    self.get_base_html(html, province_id, city_id, city_name)
+                except Exception as e:
+                    print(e)
+#         print("中级法院：" + middle_court_json)
+#         print("高级法院：" + high_court_json)
+        self.insert_court(high_court_json)
+        self.insert_court(middle_court_json)
             
                     
         # 刷新页面
@@ -115,21 +122,25 @@ class CourtSpider(Spider):
         soup = BeautifulSoup(html)
         try:
             base_court_list_li = soup.find_all("li", class_="divarealihide")
-            # 获取基层法院
-            for base_court in base_court_list_li:
-                base_court_name = base_court.get_text()
-                base_court_list.append(base_court_name)
-            print(base_court_list)
-            # 区县名字
-            area_name = str(base_court_name)[length:-4]
-            # 根据区县名字获取区县id
-            area_id = self.select_area_id(area_name)
-            self.insert_court(base_court_list, 4, "", "", "")
+            if len(base_court_list_li) != 0:
+                # 获取基层法院
+                for base_court in base_court_list_li:
+                    court_name = base_court.get_text()
+                    # 区县名字
+                    area_name = str(base_court_name)[length:-4]
+                    # 根据区县名字获取区县id
+                    area_id = self.select_area_id(area_name)
+                    court = {'court_name': court_name,'province_id': province_id, 'city_id': city_id,'area_id':area_id,'court_level':4}
+                    base_court_list.append(court)
+                    # 基层法院
+                base_court_json = json.dumps(base_court_list)
+                self.insert_court(base_court_json)
+                # print("基层法院：" + base_court_json)
         except Exception as e:
             print(e)
             
     # 插入法院信息的方法
-    def insert_court(self, court_list, court_level, province_id, city_id, area_id):
+    def insert_court(self, court_json):
 
         # 打开数据连接
         conn = pymysql.connect(host='127.0.0.1', user='root',
@@ -139,11 +150,11 @@ class CourtSpider(Spider):
         # 插入语句
         insert_sql = "insert into courts(court_name, court_level, court_province_id, court_city_id, court_area_id) values "
         i = 1
-        for court in court_list:
-            if i == len(court_list):
-                insert_sql += '("%s",%d,"%s","%s","%s");' % (court, court_level, province_id, city_id, area_id)
+        for court in json.loads(court_json):
+            if i == len(json.loads(court_json)):
+                insert_sql += '("%s",%d,"%s","%s","%s");' % (court['court_name'], court['court_level'], court['province_id'], court['city_id'], court['area_id'])
             else:
-                insert_sql += '("%s",%d,"%s","%s","%s"),' % (court, court_level, province_id, city_id, area_id)
+                insert_sql += '("%s",%d,"%s","%s","%s"),' % (court['court_name'], court['court_level'], court['province_id'], court['city_id'], court['area_id'])
             i = i + 1
         
         try:

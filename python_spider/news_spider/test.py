@@ -28,10 +28,12 @@ if __name__ == '__main__':
 	# my_open.close()
 
 	##检查是否正确写入
-	my_open = open(file_name, 'r')
-	#读取file_name2路径下的my_write.txt文件
-	my_infor = my_open.readlines()
-	my_open.close()
-	print(my_infor)
+	# my_open = open(file_name, 'r')
+	# #读取file_name2路径下的my_write.txt文件
+	# my_infor = my_open.readlines()
+	# my_open.close()
+	# print(my_infor)
+	str = '北京市第一高级人民法院'
+	print(str[0:3])
 
 	

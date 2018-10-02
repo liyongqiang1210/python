@@ -19,6 +19,7 @@ encoding//cto_spider/html_parser.py=utf-8
 encoding//cto_spider/spider_main.py=utf-8
 encoding//cto_spider/url_spider_main.py=utf-8
 encoding//mkdir/mkdir.py=utf-8
+encoding//news_spider/case_spider.py=utf-8
 encoding//proxys_ip_spider/html_downloader.py=utf-8
 encoding//test/dir_test.py=utf-8
 encoding//test/proxy_spider.py=utf-8
